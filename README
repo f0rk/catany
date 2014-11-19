@@ -1,0 +1,16 @@
+cat any sort of file, plain or compressed
+
+Requires python and the appropriate command line utilities for (potentially)
+extracting your file.
+
+Examples:
+
+~$ echo herp > /tmp/herp
+~$ echo derp | gzip > /tmp/derp.gz
+~$ echo merp | zip > /tmp/merp.zip
+  adding: - (stored 0%)
+~$ catany /tmp/herp /tmp/derp.gz /tmp/merp.zip
+herp
+derp
+merp
+~$

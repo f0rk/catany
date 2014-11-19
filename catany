@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import shutil
+import argparse
+import subprocess
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("files", nargs="*", help="files to cat")
+
+args = parser.parse_args()
+
+if not args.files:
+    args.files.append("-")
+
+
+def progcopy(*args):
+    process = subprocess.Popen(args, stdout=subprocess.PIPE)
+    shutil.copyfileobj(process.stdout, sys.stdout)
+    process.communicate()
+
+
+for file in args.files:
+    if file == "--":
+        break
+
+    if file == "-":
+        shutil.copyfileobj(sys.stdin, sys.stdout)
+    elif re.search(r'(\.tar\.gz|\.tgz)$', file):
+        progcopy("tar", "-xzf", file, "-O")
+    elif re.search(r'\.gz$', file):
+        progcopy("zcat", file)
+    elif re.search(r'\.tar\.bz2$', file):
+        progcopy("tar", "-xjf", file, "-O")
+    elif re.search(r'\.bz2$', file):
+        progcopy("bzcat", file)
+    elif re.search(r'\.zip$', file):
+        progcopy("unzip", "-p", file)
+    else:
+        with open(file, "rb") as fp:
+            shutil.copyfileobj(fp, sys.stdout)
+
